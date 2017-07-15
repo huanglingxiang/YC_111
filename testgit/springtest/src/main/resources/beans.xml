@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:p="http://www.springframework.org/schema/p"
+	  xmlns:c="http://www.springframework.org/schema/c"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<!-- 配置bean 这样spring容器就可以创建对象 -->
+	
+	<!--
+	<bean id="student" class="com.yc.bean.Student" />
+	<bean id="studentDAO" class="com.yc.dao.impl.StudentDAOImpl" />
+	<bean id="studentBiz" class="com.yc.biz.impl.StudentBizImpl">
+		<property name="studentDAO" ref="studentDAO"></property>
+	</bean>
+	<bean id="personBmiTool" class="com.mimi.impl.PersonBmiTool" />
+	<bean id="personBmiFilter" class="com.mimi.impl.PersonBmiFilter" />
+	<bean id="container" class="com.mimi.impl.Container">
+		<property name="measurable" ref="personBmiTool"></property>
+		<property name="filter" ref="personBmiFilter"></property>
+	</bean>
+	-->
+	
+	<bean id="product" class="com.yc.bean.Product" />
+
+	<!-- 静态工厂方法 -->
+	<bean id="mp" class="com.yc.bean.Myproperties" factory-method="getInstance" />
+
+	<!-- 实例化工厂 -->
+	<bean id="appleFactory" class="com.yc.bean.AppleFactory" />
+
+	<bean id="apple" lazy-init="true" factory-bean="appleFactory" factory-method="createAppleInstance" />
+
+	<bean id="constructorDI" class="com.yc.bean.ConstructorDI">
+		<!-- <constructor-arg value="1" /> <constructor-arg value="dsf" /> <constructor-arg 
+			ref="apple" /> -->
+		<!-- 索引 <constructor-arg index="0" value="1" /> <constructor-arg index="1" 
+			value="dsf" /> <constructor-arg index="2" ref="apple" /> -->
+		<!-- 属性名 -->
+		<constructor-arg name="x" value="1" />
+		<constructor-arg name="y" value="dsf" />
+		<constructor-arg name="apple" ref="apple" />
+	</bean>
+
+	<!-- <bean id="myDataSource" class="org.apache.commons.dbcp2.BasicDataSource" 
+		destroy-method="close"> <property name="driverClassName" value="com.mysql.jdbc.Driver" 
+		/> <property name="url" value="jdbc:mysql://localhost:3306/product" /> <property 
+		name="username" value="root" /> <property name="password" value="a" /> </bean> -->
+	<!-- p:namespace -->
+	<bean id="myDataSource" class="org.apache.commons.dbcp2.BasicDataSource"
+		destroy-method="close" 
+		p:driverClassName="com.mysql.jdbc.Driver"
+		p:url="jdbc:mysql://localhost:3306/product" 
+		p:username="root"
+		p:password="a" />
+
+
+	<!-- inner beans -->
+	<bean id="innerBean" class="com.yc.bean.InnerBean">
+		<property name="student">
+			<bean class="com.yc.bean.Student">
+				<property name="id" value="1" />
+				<property name="sname" value="smith" />
+			</bean>
+		</property>
+	</bean>
+
+	<!-- 集合 -->
+	<bean id="collecctionBean" class="com.yc.bean.CollectionBean">
+		<property name="list">
+			<list>
+				<value>a</value>
+				<value>b</value>
+				<value>b</value>
+			</list>
+		</property>
+		<property name="map">
+			<map>
+				<entry key="an entry" value="just some string" />
+				<entry key="a ref" value="myDataSource" />
+			</map>
+		</property>
+		<property name="set">
+			<set>
+				<value>a</value>
+				<value>b</value>
+				<value>b</value>
+			</set>
+		</property>
+
+		<property name="properties">
+			<props>
+				<prop key="administrator">administrator@example.org</prop>
+				<prop key="support">support@example.org</prop>
+				<prop key="development">development@example.org</prop>
+			</props>
+		</property>
+	</bean>
+	
+	<!-- c namespace -->
+	<bean id="constructorDI2" class="com.yc.bean.ConstructorDI"
+		c:x="1" c:y="smith" c:apple-ref="apple" />
+	
+	<!-- depends on -->
+	
+	<bean id="favoriteBiz" class="com.yc.bean.FavoriteBiz" depends-on="tagDAO"> 
+		<property name="tagDAO" ref="tagDAO" />
+		<property name="favoriteDAO" ref="favoriteDAO" />
+	</bean>
+	
+	<bean id="tagDAO" class="com.yc.bean.TagDAO" />
+	<bean id="favoriteDAO" class="com.yc.bean.FavoriteDAO" />
+	
+	
+	<bean id="lazy_init" class="com.yc.bean.Lazy_initTest" lazy-init="true"/>
+</beans>
